@@ -313,7 +313,7 @@
 
 <div id="toastBox" class="toast"></div>
 
-<script>
+<script {fileName="GradeFlow_NoorIrfan.html"}>
     const TOTAL_BARIS_DEFAULT = 15;
 
     window.onload = function() {
@@ -358,13 +358,18 @@
     function prosesUlangSemua(triggerAutoMax = true) {
         let nilaiAsliArr = [];
         let nilaiRemedialArr = []; 
+        let nilaiLulusArr = []; 
         
         const inputsNilai = document.querySelectorAll('.v-nh1');
         inputsNilai.forEach(inp => { 
             if (inp.value !== "") {
                 const val = parseFloat(inp.value);
                 nilaiAsliArr.push(val);
-                if (val < 80) nilaiRemedialArr.push(val);
+                if (val < 80) {
+                    nilaiRemedialArr.push(val);
+                } else {
+                    nilaiLulusArr.push(val);
+                }
             }
         });
 
@@ -382,7 +387,11 @@
             document.getElementById('panel-bonus-lulus').style.display = "flex";
             
             if (triggerAutoMax) {
-                inputTargetMax.value = 82;
+                if (nilaiLulusArr.length > 0) {
+                    inputTargetMax.value = Math.min(...nilaiLulusArr);
+                } else {
+                    inputTargetMax.value = 82; 
+                }
             }
         } else {
             labelMaxRules.innerText = "Nilai Maksimal Baru Kelas:";
