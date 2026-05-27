@@ -1,1113 +1,522 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konversi Nilai — By Noor Irfan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <title>GradeFlow Aplikasi Konversi Nilai By NOOR IRFAN</title>
     <style>
         :root {
-            --teal: #0d9488;
-            --teal-light: #14b8a6;
-            --teal-dark: #0f766e;
-            --teal-xdark: #134e4a;
-            --amber: #f59e0b;
-            --amber-light: #fbbf24;
-            --navy: #0f172a;
-            --navy-mid: #1e293b;
-            --navy-soft: #334155;
-            --rose: #f43f5e;
-            --paper: #f8fafc;
-            --border: #e2e8f0;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --border-color: #cbd5e1;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --sidebar-bg: #ffffff;
+            
+            --bg-asli: #f8fafc;
+            --bg-konversi: #f0fdf4;
+            --border-konversi: #86efac;
         }
 
-        * { box-sizing: border-box; }
-
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--paper);
-            color: var(--navy);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
             min-height: 100vh;
         }
 
-        code, .mono { font-family: 'DM Mono', monospace; }
-
-        /* ─── SCROLLBAR ─── */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* ─── HEADER ─── */
-        .site-header {
-            background: linear-gradient(135deg, var(--teal-xdark) 0%, var(--navy) 60%, #1a1a2e 100%);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            overflow: hidden;
-        }
-        .site-header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: 
-                radial-gradient(ellipse 60% 80% at 5% 50%, rgba(20,184,166,0.18) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 60% at 95% 20%, rgba(245,158,11,0.10) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .site-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--teal-light), transparent);
-        }
-
-        .logo-ring {
-            width: 52px; height: 52px;
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 0 2px rgba(20,184,166,0.3), 0 4px 16px rgba(13,148,136,0.4);
-            position: relative;
-        }
-        .logo-ring::after {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 17px;
-            border: 1.5px solid rgba(20,184,166,0.35);
-        }
-
-        .author-chip {
-            background: rgba(20,184,166,0.12);
-            border: 1px solid rgba(20,184,166,0.25);
-            color: var(--teal-light);
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .author-chip .dot {
-            width: 6px; height: 6px;
-            background: var(--teal-light);
-            border-radius: 50%;
-            animation: pulse-dot 2s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.75); }
-        }
-
-        /* ─── CARDS ─── */
-        .card {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            transition: box-shadow 0.2s;
-        }
-        .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-
-        /* ─── SECTION HEADING ─── */
-        .section-label {
-            display: flex; align-items: center; gap: 8px;
-            margin-bottom: 16px;
-        }
-        .section-num {
-            width: 24px; height: 24px;
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
-            color: #fff;
-            font-size: 11px; font-weight: 800;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
+        /* SIDEBAR STYLING PENGATURAN RUMUS */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 2px solid #e2e8f0;
+            padding: 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
             flex-shrink: 0;
         }
-        .section-title {
-            font-size: 15px; font-weight: 700;
-            color: var(--navy);
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* ─── TEXTAREA ─── */
-        .input-area {
-            width: 100%;
-            padding: 12px 14px;
-            background: #fafbfc;
-            border: 1.5px solid var(--border);
+        /* MAIN KONTEN TABEL */
+        .main-content {
+            flex-grow: 1;
+            padding: 24px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 24px;
             border-radius: 12px;
-            font-family: 'DM Mono', monospace;
-            font-size: 12.5px;
-            color: var(--navy);
-            line-height: 1.65;
-            resize: vertical;
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
-        .input-area:focus {
-            border-color: var(--teal);
-            box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
-        }
-        .input-area::placeholder { color: #94a3b8; }
 
-        /* ─── FORM INPUTS ─── */
-        .form-input {
+        /* PANEL HEADER */
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        h2 { margin: 0; font-size: 1.4rem; color: #0f172a; }
+
+        .live-stats-top {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .stat-badge {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .stat-max { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .stat-min { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+
+        /* Form Controls di Sidebar */
+        .config-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .config-group { 
+            display: flex; 
+            flex-direction: column;
+            gap: 6px; 
+            font-size: 0.88rem; 
+            font-weight: 600; 
+            color: #475569;
+        }
+        
+        .config-group input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
             width: 100%;
-            padding: 9px 12px;
-            background: #fafbfc;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-size: 13.5px; font-weight: 600;
-            color: var(--navy);
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .form-input:focus {
-            border-color: var(--teal);
-            box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
-        }
-        .form-label {
-            display: block;
-            font-size: 10.5px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.06em;
-            color: #64748b;
-            margin-bottom: 6px;
+            box-sizing: border-box;
+            text-align: center;
+            font-weight: bold;
+            background-color: #fff;
         }
 
-        /* ─── BUTTONS ─── */
-        .btn-demo {
-            flex: 1; min-width: 120px;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px 14px;
-            font-size: 12px; font-weight: 700;
-            color: var(--teal-dark);
-            background: rgba(13,148,136,0.07);
-            border: 1.5px solid rgba(13,148,136,0.2);
-            border-radius: 10px;
+        /* Checkbox Switch Mode */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.15s;
+            font-weight: 700;
+            color: #1e40af;
+            font-size: 0.9rem;
         }
-        .btn-demo:hover { background: rgba(13,148,136,0.14); border-color: var(--teal); }
-
-        .btn-clear {
-            flex: 1; min-width: 100px;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px 14px;
-            font-size: 12px; font-weight: 700;
-            color: #be123c;
-            background: rgba(244,63,94,0.06);
-            border: 1.5px solid rgba(244,63,94,0.18);
-            border-radius: 10px;
+        .switch-container input {
+            width: 18px;
+            height: 18px;
             cursor: pointer;
-            transition: all 0.15s;
-        }
-        .btn-clear:hover { background: rgba(244,63,94,0.12); border-color: var(--rose); }
-
-        /* ─── STAT CARDS ─── */
-        .stat-card {
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 16px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            transition: box-shadow 0.2s;
-        }
-        .stat-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.07); }
-        .stat-label {
-            font-size: 9.5px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 0.07em;
-            color: #94a3b8;
-        }
-        .stat-big {
-            font-size: 28px; font-weight: 800;
-            line-height: 1;
-        }
-        .stat-compare {
-            font-size: 10.5px; color: #94a3b8;
-            display: flex; align-items: center; justify-content: space-between;
-            padding-top: 8px; margin-top: 8px;
-            border-top: 1px solid #f1f5f9;
         }
 
-        /* ─── BADGE ─── */
-        .badge-count {
-            background: rgba(13,148,136,0.1);
-            color: var(--teal-dark);
-            font-size: 11px; font-weight: 800;
-            padding: 3px 10px; border-radius: 20px;
-            border: 1px solid rgba(13,148,136,0.2);
+        .btn-group { display: flex; gap: 10px; }
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: var(--success-hover); }
+        
+        .btn-clear-col {
+            background-color: #fee2e2;
+            color: var(--danger);
+            border: 1px solid #fca5a5;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 6px;
+            font-weight: bold;
+        }
+        .btn-clear-col:hover { background-color: var(--danger); color: white; }
 
-        /* ─── RAW STATS ─── */
-        .raw-stat-box {
-            padding: 12px; border-radius: 12px;
-            display: flex; flex-direction: column; justify-content: space-between;
+        /* Tabel Layout */
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 10px;
         }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
+        
+        .col-no { width: 50px; }
+        .col-kls { width: 65px; }
+        .col-nama { width: 280px; }
+        .col-nilai { width: 130px; }
+        .col-hasil { width: 140px; }
 
-        /* ─── METHOD OPTIONS ─── */
-        .method-opts-box {
-            background: #fafbfc;
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-        }
+        th { padding: 12px 8px; font-weight: 700; text-align: center; border-bottom: 2px solid var(--border-color); vertical-align: middle; }
+        .th-master { background-color: #e2e8f0; color: #334155; }
+        .th-asli { background-color: #e0f2fe; color: #0369a1; }
+        .th-konversi { background-color: #dcfce7; color: #15803d; }
 
-        /* ─── TABLE ─── */
-        .results-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .results-table thead th {
-            padding: 11px 18px;
-            background: #f8fafc;
-            font-size: 9.5px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 0.07em;
-            color: #94a3b8;
-            border-bottom: 2px solid var(--border);
-            position: sticky; top: 0; z-index: 10;
+        td { padding: 6px 8px; border-bottom: 1px solid #e2e8f0; }
+        .cell-asli { background-color: var(--bg-asli); }
+        .cell-konversi { background-color: var(--bg-konversi); border-left: 1px solid var(--border-konversi); }
+        .tr-row:hover td { background-color: #f1f5f9; }
+        
+        .input-tbl { 
+            width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; 
+            box-sizing: border-box; font-size: 0.9rem; background-color: #ffffff; display: block;
         }
-        .results-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
-        .results-table tbody tr:hover { background: #f8fdfc; }
-        .results-table tbody td { padding: 11px 18px; }
-
-        .badge-tuntas {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 700;
-            background: rgba(13,148,136,0.08);
-            color: var(--teal-dark);
-            border: 1px solid rgba(13,148,136,0.2);
-        }
-        .badge-belum {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 700;
-            background: rgba(244,63,94,0.07);
-            color: #be123c;
-            border: 1px solid rgba(244,63,94,0.18);
-        }
-
-        /* ─── EXPORT BUTTONS ─── */
-        .btn-excel {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 14px; font-size: 11.5px; font-weight: 700;
-            background: rgba(22,163,74,0.08); color: #166534;
-            border: 1.5px solid rgba(22,163,74,0.25); border-radius: 9px;
-            cursor: pointer; transition: all 0.15s;
-        }
-        .btn-excel:hover { background: rgba(22,163,74,0.15); }
-
-        .btn-csv {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 12px; font-size: 11.5px; font-weight: 600;
-            background: #fff; color: #475569;
-            border: 1.5px solid var(--border); border-radius: 9px;
-            cursor: pointer; transition: all 0.15s;
-        }
-        .btn-csv:hover { background: #f8fafc; }
-
-        .btn-copy {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 12px; font-size: 11.5px; font-weight: 700;
-            background: #f8fafc; color: #334155;
-            border: 1.5px solid var(--border); border-radius: 9px;
-            cursor: pointer; transition: all 0.15s;
-        }
-        .btn-copy:hover { background: #f1f5f9; }
-
-        /* ─── TOAST ─── */
-        #toast {
-            position: fixed;
-            bottom: 24px; right: 24px;
-            z-index: 9999;
-            display: flex; align-items: center; gap: 12px;
-            padding: 14px 18px;
-            max-width: 340px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid var(--border);
-            transform: translateY(80px);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        #toast.show { transform: translateY(0); opacity: 1; }
-        #toast-icon-wrap {
-            width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* ─── RANGE SLIDER ─── */
-        input[type=range] { accent-color: var(--teal); }
-
-        /* ─── INFO BOX ─── */
-        .info-box {
-            background: linear-gradient(135deg, rgba(13,148,136,0.05), rgba(13,148,136,0.02));
-            border: 1.5px solid rgba(13,148,136,0.15);
-            border-radius: 14px;
-            padding: 18px;
-            display: flex; align-items: flex-start; gap: 14px;
-        }
-        .info-icon-wrap {
-            width: 38px; height: 38px; flex-shrink: 0;
-            background: rgba(13,148,136,0.1);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* ─── FOOTER ─── */
-        .site-footer {
-            background: var(--navy);
-            color: #94a3b8;
-        }
-        .footer-brand {
-            font-weight: 800;
-            font-size: 14px;
-            color: #fff;
-            letter-spacing: -0.01em;
-        }
-
-        /* ─── DIVIDER LINE ─── */
-        .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-
-        /* ─── SEARCH + SORT ─── */
-        .tbl-ctrl-bar {
-            display: flex; flex-wrap: wrap; gap: 10px;
-            align-items: center; justify-content: space-between;
-            padding: 12px 18px;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border);
-        }
-        .search-wrap { position: relative; }
-        .search-wrap input {
-            padding: 7px 12px 7px 34px;
-            background: #fff;
-            border: 1.5px solid var(--border);
-            border-radius: 9px; font-size: 12px;
-            width: 200px; outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .search-wrap input:focus {
-            border-color: var(--teal);
-            box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
-        }
-        .search-wrap .search-icon {
-            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-            color: #94a3b8;
-        }
-        .sort-select {
-            padding: 7px 10px; font-size: 12px;
-            background: #fff; border: 1.5px solid var(--border);
-            border-radius: 9px; outline: none;
-            transition: border-color 0.15s;
-        }
-        .sort-select:focus { border-color: var(--teal); }
-
-        /* ─── ANIMATE TABLE ROWS ─── */
-        @keyframes rowIn {
-            from { opacity: 0; transform: translateX(-6px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-        .row-appear { animation: rowIn 0.18s ease both; }
-
-        /* ─── KKM BOOST OUTPUT ─── */
-        #kkm-boost-val { font-family: 'DM Mono', monospace; font-weight: 500; }
-
-        /* Decorative corner shape on header */
-        .header-deco {
-            position: absolute;
-            right: -60px; top: -40px;
-            width: 280px; height: 280px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%);
-            pointer-events: none;
+        .input-nama-full { text-align: left; font-weight: 500; }
+        .text-center { text-align: center; }
+        .out-badge { font-weight: 700; display: block; text-align: center; padding: 6px 0; border-radius: 6px; color: #0f172a;}
+        
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background-color: #1e293b; color: white;
+            padding: 12px 24px; border-radius: 6px; display: none; z-index: 1000; font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <!-- TOAST -->
-    <div id="toast">
-        <div id="toast-icon-wrap">
-            <i data-lucide="info" id="toast-icon" style="width:16px;height:16px;"></i>
+<div class="sidebar">
+    <div class="sidebar-title">⚙️ Mode Konversi</div>
+    
+    <label class="switch-container">
+        <input type="checkbox" id="modeKhususCheck" onchange="prosesUlangSemua(true)">
+        <span>Aktifkan Mode Khusus (&lt; 80 Saja)</span>
+    </label>
+
+    <div class="sidebar-title">📊 Parameter Nilai</div>
+    
+    <div class="config-card">
+        <div class="config-group">
+            <label for="targetMin">Nilai Minimal Baru (KKM):</label>
+            <input type="number" id="targetMin" value="80" oninput="prosesUlangSemua(false)">
         </div>
-        <span id="toast-message" style="font-size:13px;font-weight:600;color:#1e293b;flex:1;">Notifikasi.</span>
-        <button onclick="closeToast()" style="background:none;border:none;cursor:pointer;color:#94a3b8;padding:2px;" title="Tutup">
-            <i data-lucide="x" style="width:14px;height:14px;"></i>
-        </button>
+        
+        <div class="config-group">
+            <label id="lbl-max-rules" for="targetMax">Nilai Maksimal Baru Kelas:</label>
+            <input type="number" id="targetMax" value="100" oninput="prosesUlangSemua(false)">
+        </div>
+
+        <div class="config-group" id="panel-bonus-lulus" style="display: none;">
+            <label for="bonusLulus">Bonus Nilai Lulus (&ge;80):</label>
+            <input type="number" id="bonusLulus" value="5" oninput="prosesUlangSemua(false)">
+        </div>
     </div>
+</div>
 
-    <!-- ─── HEADER ─── -->
-    <header class="site-header">
-        <div class="header-deco"></div>
-        <div style="max-width:1200px;margin:0 auto;padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1;">
-            <div style="display:flex;align-items:center;gap:14px;">
-                <div class="logo-ring">
-                    <i data-lucide="book-open-check" style="width:26px;height:26px;color:#fff;"></i>
-                </div>
-                <div>
-                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                        <h1 style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.02em;line-height:1;">
-                            KONVERSI <span style="color:var(--teal-light);">NILAI</span>
-                        </h1>
-                        <div class="author-chip">
-                            <span class="dot"></span>
-                            By Noor Irfan
-                        </div>
-                    </div>
-                    <p style="font-size:11.5px;color:rgba(255,255,255,0.5);margin-top:3px;font-weight:500;">
-                        Aplikasi Standarisasi & Katrol Nilai Siswa Profesional
-                    </p>
+<div class="main-content">
+    <div class="container">
+        <div class="header-panel">
+            <div class="header-title-area">
+                <h2>GradeFlow Aplikasi Konversi Nilai By NOOR IRFAN</h2>
+                <div class="live-stats-top" style="margin-top: 8px;">
+                    <div class="stat-badge stat-max">📈 MAX Asli Kelas: <span id="lbl-max-asli">-</span></div>
+                    <div class="stat-badge stat-min">📉 MIN Asli Kelas: <span id="lbl-min-asli">-</span></div>
                 </div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:8px 14px;border-radius:10px;">
-                <span style="display:flex;position:relative;width:10px;height:10px;">
-                    <span style="position:absolute;inset:0;border-radius:50%;background:#34d399;opacity:0.75;animation:ping 1.5s ease-in-out infinite;"></span>
-                    <span style="position:relative;width:10px;height:10px;border-radius:50%;background:#10b981;display:block;"></span>
-                </span>
-                <span style="font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.8);">Siap Mengonversi</span>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="tambahBaris()">+ Tambah Baris</button>
+                <button class="btn btn-success" onclick="copyHasilKonversi()">📋 Copy Hasil Konversi</button>
             </div>
         </div>
-        <style>
-            @keyframes ping { 0%,100%{transform:scale(1);opacity:.75} 50%{transform:scale(1.8);opacity:0} }
-        </style>
-    </header>
 
-    <!-- ─── MAIN CONTENT ─── -->
-    <main style="max-width:1200px;margin:0 auto;padding:28px 24px;display:grid;grid-template-columns:1fr;gap:24px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" id="main-grid">
-
-            <!-- LEFT COLUMN -->
-            <div style="display:flex;flex-direction:column;gap:20px;">
-
-                <!-- Card 1: Data Input -->
-                <div class="card" style="padding:22px;">
-                    <div class="section-label">
-                        <div class="section-num">1</div>
-                        <span class="section-title">Data Nilai Siswa</span>
-                        <span class="badge-count" id="student-count-badge" style="margin-left:auto;">0 Siswa</span>
-                    </div>
-
-                    <div>
-                        <label class="form-label">Input Manual <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#94a3b8;">(Satu baris: Nama, Nilai)</span></label>
-                        <textarea id="raw-scores-input" rows="8" class="input-area" placeholder="Contoh:&#10;Andi Saputra, 72&#10;Budi Cahyono, 45&#10;Citra Lestari, 88&#10;Dewi Rahayu, 59&#10;Eko Wijaya, 60"></textarea>
-                        <p style="font-size:11px;color:#94a3b8;margin-top:6px;line-height:1.6;">
-                            Bisa langsung salin kolom Nama & Nilai dari Excel/Google Sheets.
-                        </p>
-                    </div>
-
-                    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-                        <button onclick="loadDemoData()" class="btn-demo">
-                            <i data-lucide="sparkles" style="width:13px;height:13px;"></i> Gunakan Data Demo
-                        </button>
-                        <button onclick="clearInput()" class="btn-clear">
-                            <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Kosongkan
-                        </button>
-                    </div>
-
-                    <!-- Raw Stats Panel -->
-                    <div id="raw-stats-panel" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-                        <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;display:flex;align-items:center;gap:6px;margin-bottom:10px;">
-                            <i data-lucide="bar-chart-2" style="width:13px;height:13px;color:var(--teal);"></i>
-                            Analisis Input Nilai Asli
-                        </div>
-
-                        <!-- Row 1: Tertinggi & Terendah -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-                            <div class="raw-stat-box" style="background:rgba(13,148,136,0.05);border:1px solid rgba(13,148,136,0.15);">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                                    <span style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;">Tertinggi (Asli)</span>
-                                    <i data-lucide="trending-up" style="width:13px;height:13px;color:var(--teal);"></i>
-                                </div>
-                                <span id="raw-stat-max-val" style="font-size:22px;font-weight:800;color:var(--teal-xdark);">-</span>
-                                <span id="raw-stat-max-name" style="font-size:10px;color:#64748b;font-weight:500;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">-</span>
-                            </div>
-                            <div class="raw-stat-box" style="background:rgba(244,63,94,0.05);border:1px solid rgba(244,63,94,0.15);">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                                    <span style="font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;">Terendah (Asli)</span>
-                                    <i data-lucide="trending-down" style="width:13px;height:13px;color:var(--rose);"></i>
-                                </div>
-                                <span id="raw-stat-min-val" style="font-size:22px;font-weight:800;color:#9f1239;">-</span>
-                                <span id="raw-stat-min-name" style="font-size:10px;color:#64748b;font-weight:500;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">-</span>
-                            </div>
-                        </div>
-
-                        <!-- Row 2: Rata-rata, Tuntas, Belum Tuntas -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-                            <div class="raw-stat-box" style="background:#f8fafc;border:1px solid var(--border);">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                                    <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;">Rata-Rata</span>
-                                    <i data-lucide="minus" style="width:12px;height:12px;color:#94a3b8;"></i>
-                                </div>
-                                <span id="raw-stat-avg" style="font-size:18px;font-weight:800;color:var(--navy);">-</span>
-                                <span style="font-size:9.5px;color:#94a3b8;font-weight:500;display:block;margin-top:2px;">nilai kelas</span>
-                            </div>
-                            <div class="raw-stat-box" style="background:rgba(22,163,74,0.05);border:1px solid rgba(22,163,74,0.18);">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                                    <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;">Tuntas</span>
-                                    <i data-lucide="check-circle" style="width:12px;height:12px;color:#16a34a;"></i>
-                                </div>
-                                <span id="raw-stat-pass" style="font-size:18px;font-weight:800;color:#166534;">-</span>
-                                <span id="raw-stat-pass-pct" style="font-size:9.5px;color:#16a34a;font-weight:600;display:block;margin-top:2px;">siswa</span>
-                            </div>
-                            <div class="raw-stat-box" style="background:rgba(244,63,94,0.05);border:1px solid rgba(244,63,94,0.15);">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-                                    <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;">Belum</span>
-                                    <i data-lucide="x-circle" style="width:12px;height:12px;color:var(--rose);"></i>
-                                </div>
-                                <span id="raw-stat-fail" style="font-size:18px;font-weight:800;color:#be123c;">-</span>
-                                <span id="raw-stat-fail-pct" style="font-size:9.5px;color:var(--rose);font-weight:600;display:block;margin-top:2px;">siswa</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2: Metode & Pengaturan -->
-                <div class="card" style="padding:22px;">
-                    <div class="section-label">
-                        <div class="section-num">2</div>
-                        <span class="section-title">Metode & Pengaturan</span>
-                    </div>
-
-                    <div style="display:flex;flex-direction:column;gap:14px;">
-                        <div>
-                            <label class="form-label" for="kkm-input">Kriteria Ketuntasan Minimal (KKM)</label>
-                            <div style="position:relative;">
-                                <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none;">
-                                    <i data-lucide="target" style="width:15px;height:15px;"></i>
-                                </div>
-                                <input type="number" id="kkm-input" value="80" min="1" max="100" class="form-input" style="padding-left:36px;" oninput="calculateConversion()">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="form-label" for="method-select">Metode Katrol Nilai</label>
-                            <select id="method-select" onchange="toggleMethodInputs(); calculateConversion();" class="form-input" style="cursor:pointer;">
-                                <option value="linear" selected>Skala Linear (Min-Max Terpeta)</option>
-                                <option value="sqrt">Katrol Akar (Kuantum)</option>
-                                <option value="constant">Tambah Konstanta (Flat)</option>
-                                <option value="average">Target Rata-Rata Kelas</option>
-                                <option value="kkm-boost">Dongkrak Remedial (Khusus di Bawah KKM)</option>
-                            </select>
-                        </div>
-
-                        <div class="method-opts-box" id="method-options-container">
-
-                            <!-- Linear -->
-                            <div id="option-linear-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                                <div>
-                                    <label class="form-label">Target Min Baru</label>
-                                    <input type="number" id="linear-min" value="80" min="0" max="100" class="form-input" oninput="calculateConversion()">
-                                </div>
-                                <div>
-                                    <label class="form-label">Target Max Baru</label>
-                                    <input type="number" id="linear-max" value="95" min="0" max="100" class="form-input" oninput="calculateConversion()">
-                                </div>
-                            </div>
-
-                            <!-- Sqrt -->
-                            <div id="option-sqrt-fields" style="display:none;">
-                                <p style="font-size:11.5px;color:#64748b;line-height:1.6;margin-bottom:10px;">
-                                    Rumus: <code style="background:rgba(13,148,136,0.08);color:var(--teal-dark);padding:2px 7px;border-radius:6px;font-size:11px;">Nilai Baru = √Nilai Lama × Konstanta</code>
-                                </p>
-                                <div>
-                                    <label class="form-label">Konstanta Pengali</label>
-                                    <input type="number" id="sqrt-multiplier" value="10" step="0.1" class="form-input" oninput="calculateConversion()">
-                                </div>
-                            </div>
-
-                            <!-- Constant -->
-                            <div id="option-constant-fields" style="display:none;">
-                                <label class="form-label">Nilai Tambahan / Pengurang (+/-)</label>
-                                <input type="number" id="constant-value" value="10" class="form-input" oninput="calculateConversion()">
-                            </div>
-
-                            <!-- Average -->
-                            <div id="option-average-fields" style="display:none;">
-                                <label class="form-label">Target Rata-Rata Kelas</label>
-                                <input type="number" id="target-average" value="80" min="1" max="100" class="form-input" oninput="calculateConversion()">
-                                <p style="font-size:10.5px;color:#94a3b8;margin-top:6px;">Faktor perkalian proporsional agar rata-rata tepat sasaran.</p>
-                            </div>
-
-                            <!-- KKM Boost -->
-                            <div id="option-kkm-fields" style="display:none;">
-                                <p style="font-size:11.5px;color:#64748b;margin-bottom:12px;line-height:1.6;">
-                                    Dongkrak nilai di bawah KKM tanpa menyentuh yang sudah tuntas.
-                                </p>
-                                <label class="form-label">Persentase Dongkrak KKM</label>
-                                <div style="display:flex;align-items:center;gap:10px;">
-                                    <input type="range" id="kkm-boost-slider" min="10" max="100" value="70" style="flex:1;"
-                                        oninput="document.getElementById('kkm-boost-val').value = this.value; calculateConversion();">
-                                    <span style="font-size:12px;font-weight:700;color:var(--navy);background:#fff;border:1.5px solid var(--border);padding:4px 10px;border-radius:8px;min-width:52px;text-align:center;">
-                                        <output id="kkm-boost-val">70</output>%
-                                    </span>
-                                </div>
-                                <p style="font-size:10.5px;color:#94a3b8;margin-top:6px;">100% = didongkrak pas KKM. 50% = setengah jalan menuju KKM.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- /LEFT COLUMN -->
-
-            <!-- RIGHT COLUMN -->
-            <div style="display:flex;flex-direction:column;gap:20px;">
-
-                <!-- Stat Cards -->
-                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
-                    <!-- Rata-rata -->
-                    <div class="stat-card">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                            <span class="stat-label">Rata-Rata Baru</span>
-                            <i data-lucide="activity" style="width:15px;height:15px;color:var(--teal);"></i>
-                        </div>
-                        <div class="stat-big" style="color:var(--teal-dark);" id="stat-new-avg">0.0</div>
-                        <div class="stat-compare">
-                            <span>Nilai Asli</span>
-                            <span id="stat-old-avg" style="font-weight:700;color:var(--navy);">0.0</span>
-                        </div>
-                    </div>
-
-                    <!-- Kelulusan -->
-                    <div class="stat-card">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                            <span class="stat-label">Kelulusan</span>
-                            <i data-lucide="check-circle-2" style="width:15px;height:15px;color:#22c55e;"></i>
-                        </div>
-                        <div class="stat-big" id="stat-new-pass" style="color:#16a34a;">0%</div>
-                        <div class="stat-compare">
-                            <span>Asli Lulus</span>
-                            <span id="stat-old-pass" style="font-weight:700;color:var(--navy);">0%</span>
-                        </div>
-                    </div>
-
-                    <!-- Nilai Max -->
-                    <div class="stat-card">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                            <span class="stat-label">Nilai Max Baru</span>
-                            <i data-lucide="trophy" style="width:15px;height:15px;color:var(--amber);"></i>
-                        </div>
-                        <div class="stat-big" style="color:var(--navy);" id="stat-new-max">0</div>
-                        <div class="stat-compare">
-                            <span>Nilai Asli</span>
-                            <span id="stat-old-max" style="font-weight:700;color:var(--teal-dark);">0</span>
-                        </div>
-                    </div>
-
-                    <!-- Nilai Min -->
-                    <div class="stat-card">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                            <span class="stat-label">Nilai Min Baru</span>
-                            <i data-lucide="arrow-down-circle" style="width:15px;height:15px;color:var(--rose);"></i>
-                        </div>
-                        <div class="stat-big" style="color:var(--navy);" id="stat-new-min">0</div>
-                        <div class="stat-compare">
-                            <span>Nilai Asli</span>
-                            <span id="stat-old-min" style="font-weight:700;color:var(--rose);">0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Results Table Card -->
-                <div class="card" style="overflow:hidden;">
-                    <div style="padding:18px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <i data-lucide="table-2" style="width:17px;height:17px;color:var(--teal);"></i>
-                            <span style="font-size:15px;font-weight:700;color:var(--navy);">Tabel Hasil Konversi</span>
-                        </div>
-                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                            <button onclick="exportToExcel()" class="btn-excel">
-                                <i data-lucide="file-spreadsheet" style="width:13px;height:13px;"></i> Excel (.xlsx)
-                            </button>
-                            <button onclick="exportToCSV()" class="btn-csv">
-                                <i data-lucide="file-text" style="width:13px;height:13px;"></i> CSV
-                            </button>
-                            <button onclick="copyTableToClipboard()" class="btn-copy">
-                                <i data-lucide="copy" style="width:13px;height:13px;"></i> Salin
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Filter & Sort bar -->
-                    <div class="tbl-ctrl-bar">
-                        <div class="search-wrap">
-                            <i data-lucide="search" class="search-icon" style="width:13px;height:13px;"></i>
-                            <input type="text" id="table-search" placeholder="Cari nama siswa..." oninput="filterAndRenderTable()">
-                        </div>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span style="font-size:11px;color:#94a3b8;font-weight:600;">Urutkan:</span>
-                            <select id="table-sort" class="sort-select" onchange="sortAndRenderTable()">
-                                <option value="default">Default</option>
-                                <option value="name-asc">Nama (A-Z)</option>
-                                <option value="score-desc">Nilai Lama ↓</option>
-                                <option value="score-new-desc">Nilai Baru ↓</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Table -->
-                    <div style="overflow-x:auto;max-height:400px;overflow-y:auto;">
-                        <table class="results-table">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:center;width:48px;">No</th>
-                                    <th>Nama Siswa</th>
-                                    <th style="text-align:center;">Nilai Asli</th>
-                                    <th style="text-align:center;">Hasil Katrol</th>
-                                    <th style="text-align:center;">Kenaikan</th>
-                                    <th style="text-align:center;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="results-table-body">
-                                <tr>
-                                    <td colspan="6" style="text-align:center;padding:40px 20px;color:#94a3b8;">
-                                        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-                                            <i data-lucide="inbox" style="width:36px;height:36px;color:#cbd5e1;"></i>
-                                            <span style="font-size:13px;">Belum ada data. Tambahkan nama & nilai di panel kiri.</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Info Box -->
-                <div class="info-box">
-                    <div class="info-icon-wrap">
-                        <i data-lucide="help-circle" style="width:18px;height:18px;color:var(--teal);"></i>
-                    </div>
-                    <div>
-                        <div style="font-size:13px;font-weight:700;color:var(--teal-xdark);margin-bottom:5px;">Tentang Metode Katrol Nilai</div>
-                        <p style="font-size:11.5px;color:#0f766e;line-height:1.65;margin:0;">
-                            <strong>Katrol Nilai</strong> adalah teknik normalisasi yang legal dalam pendidikan untuk menyesuaikan sebaran nilai dengan parameter tertentu demi keadilan. Untuk pendongkrakan massal yang sehat, gunakan <strong>Katrol Akar (Kuantum)</strong> — mendongkrak nilai sangat rendah secara ekstrem, tanpa membuat nilai tinggi melampaui 100 secara tidak rasional.
-                        </p>
-                    </div>
-                </div>
-
-            </div><!-- /RIGHT COLUMN -->
+        <div class="table-container">
+            <table id="tabelNilai">
+                <colgroup>
+                    <col class="col-no">
+                    <col class="col-kls">
+                    <col class="col-nama">
+                    <col class="col-nilai">
+                    <col class="col-hasil">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="th-master">NO</th>
+                        <th rowspan="2" class="th-master">KLS</th>
+                        <th rowspan="2" class="th-master">NAMA LENGKAP SISWA</th>
+                        <th class="th-asli">INPUT NILAI</th>
+                        <th class="th-konversi">HASIL KONVERSI</th>
+                    </tr>
+                    <tr>
+                        <th class="th-asli">
+                            NILAI ASLI (NH 1)
+                            <br>
+                            <button class="btn-clear-col" onclick="hapusKolomNilai()" title="Hapus seluruh nilai asli">🗑️ Kosongkan</button>
+                        </th>
+                        <th class="th-konversi" style="background-color: #bbf7d0;">
+                            NILAI KONVERSI
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="bodyTabel"></tbody>
+            </table>
         </div>
-    </main>
+    </div>
+</div>
 
-    <!-- ─── FOOTER ─── -->
-    <footer class="site-footer" style="margin-top:8px;">
-        <div style="max-width:1200px;margin:0 auto;padding:18px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
-            <div>
-                <span class="footer-brand">KONVERSI NILAI</span>
-                <span style="color:rgba(255,255,255,0.35);margin:0 8px;">·</span>
-                <span style="font-size:11.5px;color:rgba(255,255,255,0.4);">By Noor Irfan &copy; 2026</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:16px;">
-                <span style="font-size:11px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:5px;">
-                    <i data-lucide="shield-check" style="width:12px;height:12px;"></i> Data diproses lokal
-                </span>
-                <span style="font-size:11px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:5px;">
-                    <i data-lucide="zap" style="width:12px;height:12px;"></i> Konversi Real-time
-                </span>
-            </div>
-        </div>
-    </footer>
+<div id="toastBox" class="toast"></div>
 
-    <!-- ─── RESPONSIVE GRID ─── -->
-    <style>
-        @media(max-width: 768px) {
-            #main-grid { grid-template-columns: 1fr !important; }
-            .search-wrap input { width: 160px; }
+<script>
+    const TOTAL_BARIS_DEFAULT = 15;
+
+    window.onload = function() {
+        const tbody = document.getElementById('bodyTabel');
+        for (let i = 1; i <= TOTAL_BARIS_DEFAULT; i++) {
+            tbody.appendChild(buatBarisTabel(i));
         }
-    </style>
+    };
 
-    <!-- ─── SCRIPT ─── -->
-    <script>
-        let parsedData = [];
-        let convertedData = [];
-        let displayList = [];
+    function buatBarisTabel(nomor) {
+        const tr = document.createElement('tr');
+        tr.className = "tr-row";
+        tr.innerHTML = `
+            <td class="text-center" style="font-weight: bold; color: #94a3b8;">${nomor}</td>
+            <td class="text-center"><input type="text" class="input-tbl text-center" value="7A" style="font-weight:600;"></td>
+            <td><input type="text" class="input-tbl cell-nama input-nama-full" placeholder="Nama siswa..."></td>
+            <td class="cell-asli"><input type="number" class="input-tbl text-center v-nh1 v-asli-input" min="0" max="100" oninput="prosesUlangSemua(true)"></td>
+            <td class="cell-konversi text-center"><span class="out-badge k-nh1" style="font-size:0.95rem; background-color:#bbf7d0; color:#14532d; border: 1px solid #86efac;">-</span></td>
+        `;
+        kaitkanFiturPasteExcel(tr);
+        return tr;
+    }
 
-        const rawScoresInput = document.getElementById('raw-scores-input');
-        const kkmInput = document.getElementById('kkm-input');
-        const methodSelect = document.getElementById('method-select');
-        const resultsTableBody = document.getElementById('results-table-body');
+    function tambahBaris() {
+        const tbody = document.getElementById('bodyTabel');
+        tbody.appendChild(buatBarisTabel(tbody.children.length + 1));
+    }
 
-        const demoDataStr = "Ahmad Fikri, 42\nBagus Pambudi, 58\nCitra Kirana, 74\nDewi Lestari, 85\nEza Syahputra, 35\nFaza Alamsyah, 68\nGita Gutawa, 90\nHendra Wijaya, 49\nIrma Suryani, 60\nJoko Santoso, 75\nKartika Putri, 82\nLilis Sumiati, 55\nMuhammad Yusuf, 63\nNurul Hidayah, 70\nPrasetyo Utomo, 47\nRiana Safitri, 78";
-
-        window.onload = function () {
-            lucide.createIcons();
-            rawScoresInput.addEventListener('input', handleInputScores);
-            loadDemoData();
-        };
-
-        function loadDemoData() {
-            rawScoresInput.value = demoDataStr;
-            handleInputScores();
-            showToast("Data demo berhasil dimuat!", "check-circle", "#dcfce7", "#166534");
-        }
-
-        function clearInput() {
-            rawScoresInput.value = "";
-            handleInputScores();
-            showToast("Kolom input dibersihkan.", "info", "#e0f2fe", "#0369a1");
-        }
-
-        function handleInputScores() {
-            const lines = rawScoresInput.value.split('\n');
-            parsedData = [];
-            let rowCounter = 1;
-
-            lines.forEach((line) => {
-                if (!line.trim()) return;
-                let name = `Siswa ${rowCounter}`;
-                let score = NaN;
-
-                if (line.includes(',')) {
-                    const parts = line.split(',');
-                    const possibleScore = parseFloat(parts[parts.length - 1].trim());
-                    if (!isNaN(possibleScore)) {
-                        score = possibleScore;
-                        name = parts.slice(0, -1).join(',').trim();
-                    }
-                } else {
-                    const parts = line.trim().split(/\s+/);
-                    if (parts.length > 1) {
-                        const possibleScore = parseFloat(parts[parts.length - 1]);
-                        if (!isNaN(possibleScore)) {
-                            score = possibleScore;
-                            name = parts.slice(0, -1).join(' ').trim();
-                        }
-                    } else {
-                        const possibleScore = parseFloat(line.trim());
-                        if (!isNaN(possibleScore)) score = possibleScore;
-                    }
-                }
-
-                if (isNaN(score)) {
-                    const match = line.match(/\d+(\.\d+)?/);
-                    if (match) score = parseFloat(match[0]);
-                }
-
-                if (!isNaN(score)) {
-                    score = Math.max(0, Math.min(100, score));
-                    parsedData.push({ id: rowCounter++, name, originalScore: score });
-                }
+    function hapusKolomNilai() {
+        if(confirm(`Apakah Anda yakin ingin mengosongkan semua data nilai asli?`)) {
+            document.querySelectorAll('.v-nh1').forEach(input => {
+                input.value = "";
+                input.style.backgroundColor = "#ffffff";
+                input.style.borderColor = "#cbd5e1";
             });
+            document.getElementById('targetMax').value = 100;
+            prosesUlangSemua(false);
+            showToast("🗑️ Nilai berhasil dikosongkan.");
+        }
+    }
 
-            document.getElementById('student-count-badge').textContent = `${parsedData.length} Siswa`;
-            calculateConversion();
+    function prosesUlangSemua(triggerAutoMax = true) {
+        let nilaiAsliArr = [];
+        let nilaiRemedialArr = []; 
+        
+        const inputsNilai = document.querySelectorAll('.v-nh1');
+        inputsNilai.forEach(inp => { 
+            if (inp.value !== "") {
+                const val = parseFloat(inp.value);
+                nilaiAsliArr.push(val);
+                if (val < 80) nilaiRemedialArr.push(val);
+            }
+        });
+
+        const xMin = nilaiAsliArr.length > 0 ? Math.min(...nilaiAsliArr) : 0;
+        const xMax = nilaiAsliArr.length > 0 ? Math.max(...nilaiAsliArr) : 100;
+        document.getElementById('lbl-max-asli').innerText = nilaiAsliArr.length > 0 ? xMax : '-';
+        document.getElementById('lbl-min-asli').innerText = nilaiAsliArr.length > 0 ? xMin : '-';
+
+        const isModeKhusus = document.getElementById('modeKhususCheck').checked;
+        const inputTargetMax = document.getElementById('targetMax');
+        const labelMaxRules = document.getElementById('lbl-max-rules');
+        
+        if(isModeKhusus) {
+            labelMaxRules.innerText = "Nilai Maksimal Baru (<80):";
+            document.getElementById('panel-bonus-lulus').style.display = "flex";
+            
+            if (triggerAutoMax) {
+                inputTargetMax.value = 82;
+            }
+        } else {
+            labelMaxRules.innerText = "Nilai Maksimal Baru Kelas:";
+            document.getElementById('panel-bonus-lulus').style.display = "none";
+            
+            if (triggerAutoMax && nilaiAsliArr.length > 0) {
+                inputTargetMax.value = Math.min(100, xMax + 5);
+            }
         }
 
-        function toggleMethodInputs() {
-            const method = methodSelect.value;
-            ['option-linear-fields','option-sqrt-fields','option-constant-fields','option-average-fields','option-kkm-fields']
-                .forEach(id => document.getElementById(id).style.display = 'none');
-            const map = { linear:'option-linear-fields', sqrt:'option-sqrt-fields', constant:'option-constant-fields', average:'option-average-fields', 'kkm-boost':'option-kkm-fields' };
-            if (map[method]) document.getElementById(map[method]).style.display = '';
-        }
+        const yMin = parseFloat(document.getElementById('targetMin').value) || 80;
+        let yMax = parseFloat(inputTargetMax.value) || 82;
+        const bonusFlat = parseFloat(document.getElementById('bonusLulus').value) || 5;
 
-        function calculateConversion() {
-            if (parsedData.length === 0) {
-                convertedData = [];
-                renderTable([]);
-                updateStats(0,0,0,0,0,0,0,0);
-                document.getElementById('raw-stats-panel').style.display = 'none';
+        if (yMax > 100) { yMax = 100; inputTargetMax.value = 100; }
+
+        const rows = document.querySelectorAll('#bodyTabel tr');
+        rows.forEach(row => {
+            const inputAsli = row.querySelector('.v-nh1');
+            const nh1 = inputAsli.value;
+            const cellKonv = row.querySelector('.k-nh1');
+
+            if (nh1 === "") {
+                cellKonv.innerText = "-";
+                cellKonv.style.backgroundColor = "#bbf7d0";
+                cellKonv.style.color = "#14532d";
+                inputAsli.style.backgroundColor = "#ffffff";
+                inputAsli.style.borderColor = "#cbd5e1";
                 return;
             }
 
-            const kkm = parseFloat(kkmInput.value) || 75;
-            const method = methodSelect.value;
-            const originalScores = parsedData.map(d => d.originalScore);
-            const origMin = Math.min(...originalScores);
-            const origMax = Math.max(...originalScores);
-            const origAvg = originalScores.reduce((a,b)=>a+b,0) / parsedData.length;
-            const origPassPercentage = Math.round((parsedData.filter(d=>d.originalScore>=kkm).length / parsedData.length)*100);
-            // (pass/fail counts computed below in raw stats block)
+            const val = parseFloat(nh1);
 
-            const rawMaxSt = parsedData.reduce((p,c)=>p.originalScore>c.originalScore?p:c);
-            const rawMinSt = parsedData.reduce((p,c)=>p.originalScore<c.originalScore?p:c);
-
-            const origPassCount = parsedData.filter(d=>d.originalScore>=kkm).length;
-            const origFailCount = parsedData.length - origPassCount;
-            const origPassPct = Math.round((origPassCount/parsedData.length)*100);
-            const origFailPct = 100 - origPassPct;
-
-            document.getElementById('raw-stats-panel').style.display = '';
-            document.getElementById('raw-stat-max-val').textContent = rawMaxSt.originalScore;
-            document.getElementById('raw-stat-max-name').textContent = rawMaxSt.name;
-            document.getElementById('raw-stat-max-name').title = rawMaxSt.name;
-            document.getElementById('raw-stat-min-val').textContent = rawMinSt.originalScore;
-            document.getElementById('raw-stat-min-name').textContent = rawMinSt.name;
-            document.getElementById('raw-stat-min-name').title = rawMinSt.name;
-            document.getElementById('raw-stat-avg').textContent = origAvg.toFixed(1);
-            document.getElementById('raw-stat-pass').textContent = origPassCount;
-            document.getElementById('raw-stat-pass-pct').textContent = `${origPassPct}% tuntas`;
-            document.getElementById('raw-stat-fail').textContent = origFailCount;
-            document.getElementById('raw-stat-fail-pct').textContent = `${origFailPct}% belum`;
-
-            convertedData = parsedData.map(student => {
-                let oldS = student.originalScore;
-                let newS = oldS;
-
-                if (method === 'linear') {
-                    const tMin = parseFloat(document.getElementById('linear-min').value) || 60;
-                    const tMax = parseFloat(document.getElementById('linear-max').value) || 95;
-                    newS = origMax===origMin ? tMax : tMin + ((oldS-origMin)*(tMax-tMin))/(origMax-origMin);
-                } else if (method === 'sqrt') {
-                    const m = parseFloat(document.getElementById('sqrt-multiplier').value) || 10;
-                    newS = Math.sqrt(oldS) * m;
-                } else if (method === 'constant') {
-                    newS = oldS + (parseFloat(document.getElementById('constant-value').value)||0);
-                } else if (method === 'average') {
-                    const tAvg = parseFloat(document.getElementById('target-average').value)||80;
-                    newS = origAvg > 0 ? oldS*(tAvg/origAvg) : tAvg;
-                } else if (method === 'kkm-boost') {
-                    const bf = (parseFloat(document.getElementById('kkm-boost-slider').value)||70)/100;
-                    newS = oldS < kkm ? oldS + ((kkm-oldS)*bf) : oldS;
-                }
-
-                newS = Math.max(0, Math.min(100, Math.round(newS*100)/100));
-                return { ...student, convertedScore: newS, delta: Math.round((newS-oldS)*100)/100, isPassed: newS>=kkm };
-            });
-
-            const newScores = convertedData.map(d=>d.convertedScore);
-            const newMin = Math.min(...newScores);
-            const newMax = Math.max(...newScores);
-            const newAvg = Math.round((newScores.reduce((a,b)=>a+b,0)/convertedData.length)*10)/10;
-            const newPassPct = Math.round((convertedData.filter(d=>d.isPassed).length/convertedData.length)*100);
-
-            updateStats(origAvg, newAvg, origPassPercentage, newPassPct, origMax, newMax, origMin, newMin);
-            sortAndRenderTable();
-        }
-
-        function updateStats(origAvg, newAvg, origPass, newPass, origMax, newMax, origMin, newMin) {
-            document.getElementById('stat-new-avg').textContent = origAvg===0?'0.0':newAvg.toFixed(1);
-            document.getElementById('stat-old-avg').textContent = origAvg===0?'0.0':origAvg.toFixed(1);
-            const passEl = document.getElementById('stat-new-pass');
-            passEl.textContent = `${newPass}%`;
-            passEl.style.color = newPass>origPass?'#16a34a':newPass<origPass?'#e11d48':'#1e293b';
-            document.getElementById('stat-old-pass').textContent = `${origPass}%`;
-            document.getElementById('stat-new-max').textContent = origMax===0?'0':Math.round(newMax);
-            document.getElementById('stat-old-max').textContent = origMax===0?'0':Math.round(origMax);
-            document.getElementById('stat-new-min').textContent = origMin===0?'0':Math.round(newMin);
-            document.getElementById('stat-old-min').textContent = origMin===0?'0':Math.round(origMin);
-        }
-
-        function sortAndRenderTable() {
-            const sortBy = document.getElementById('table-sort').value;
-            displayList = [...convertedData];
-            if (sortBy==='name-asc') displayList.sort((a,b)=>a.name.localeCompare(b.name));
-            else if (sortBy==='score-desc') displayList.sort((a,b)=>b.originalScore-a.originalScore);
-            else if (sortBy==='score-new-desc') displayList.sort((a,b)=>b.convertedScore-a.convertedScore);
-            filterAndRenderTable();
-        }
-
-        function filterAndRenderTable() {
-            const kw = document.getElementById('table-search').value.toLowerCase().trim();
-            renderTable(displayList.filter(s=>s.name.toLowerCase().includes(kw)));
-        }
-
-        function renderTable(data) {
-            resultsTableBody.innerHTML = '';
-            if (data.length === 0) {
-                resultsTableBody.innerHTML = `
-                    <tr><td colspan="6" style="text-align:center;padding:40px 20px;color:#94a3b8;">
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-                            <i data-lucide="search-x" style="width:32px;height:32px;color:#cbd5e1;"></i>
-                            <span style="font-size:13px;">Data tidak ditemukan.</span>
-                        </div>
-                    </td></tr>`;
-                lucide.createIcons(); return;
+            if (val < 80) {
+                inputAsli.style.backgroundColor = "#fee2e2"; 
+                inputAsli.style.borderColor = "#fca5a5";
+            } else {
+                inputAsli.style.backgroundColor = "#dcfce7"; 
+                inputAsli.style.borderColor = "#86efac";
             }
 
-            data.forEach((student, index) => {
-                const statusBadge = student.isPassed
-                    ? `<span class="badge-tuntas"><span style="width:6px;height:6px;border-radius:50%;background:var(--teal);"></span>Tuntas</span>`
-                    : `<span class="badge-belum"><span style="width:6px;height:6px;border-radius:50%;background:var(--rose);"></span>Belum Tuntas</span>`;
+            let finalNilai = val;
 
-                let deltaHtml = `<span style="color:#94a3b8;font-size:12px;">—</span>`;
-                if (student.delta > 0) {
-                    deltaHtml = `<span style="background:rgba(13,148,136,0.08);color:var(--teal-dark);padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:700;">+${student.delta.toFixed(1)}</span>`;
-                } else if (student.delta < 0) {
-                    deltaHtml = `<span style="background:rgba(244,63,94,0.07);color:#be123c;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:700;">${student.delta.toFixed(1)}</span>`;
+            if (isModeKhusus) {
+                if (val < 80) {
+                    const xMinRemed = nilaiRemedialArr.length > 0 ? Math.min(...nilaiRemedialArr) : 0;
+                    const xMaxRemed = nilaiRemedialArr.length > 0 ? Math.max(...nilaiRemedialArr) : 79;
+                    
+                    if (xMaxRemed !== xMinRemed) {
+                        finalNilai = yMin + ((val - xMinRemed) / (xMaxRemed - xMinRemed)) * (yMax - yMin);
+                    } else {
+                        finalNilai = yMin; 
+                    }
+                } else {
+                    finalNilai = val + bonusFlat;
                 }
+            } else {
+                if (xMax !== xMin) {
+                    finalNilai = yMin + ((val - xMin) / (xMax - xMin)) * (yMax - yMin);
+                } else {
+                    finalNilai = yMin;
+                }
+            }
+            
+            finalNilai = Math.min(100, Math.max(0, Math.round(finalNilai)));
+            cellKonv.innerText = finalNilai;
 
-                const tr = document.createElement('tr');
-                tr.className = 'row-appear';
-                tr.style.animationDelay = `${index * 20}ms`;
-                tr.innerHTML = `
-                    <td style="text-align:center;color:#94a3b8;font-size:12px;font-weight:600;">${index+1}</td>
-                    <td style="font-weight:600;color:var(--navy);">${escapeHTML(student.name)}</td>
-                    <td style="text-align:center;color:#64748b;font-weight:500;" class="mono">${student.originalScore}</td>
-                    <td style="text-align:center;font-weight:800;color:var(--teal-dark);font-size:14px;" class="mono">${student.convertedScore}</td>
-                    <td style="text-align:center;">${deltaHtml}</td>
-                    <td style="text-align:center;">${statusBadge}</td>
-                `;
-                resultsTableBody.appendChild(tr);
+            if (finalNilai < yMin) {
+                cellKonv.style.backgroundColor = "#fee2e2";
+                cellKonv.style.color = "#991b1b";
+                cellKonv.style.borderColor = "#fca5a5";
+            } else {
+                cellKonv.style.backgroundColor = "#bbf7d0";
+                cellKonv.style.color = "#14532d";
+                cellKonv.style.borderColor = "#86efac";
+            }
+        });
+    }
+
+    function kaitkanFiturPasteExcel(rowElement) {
+        const inputs = rowElement.querySelectorAll('input');
+        inputs.forEach((input, colIndex) => {
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('Text');
+                const lines = pastedText.split(/\r\n|\r|\n/);
+                let currentRow = rowElement;
+
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].trim() === "") continue;
+                    const columns = lines[i].split('\t');
+                    if (!currentRow) {
+                        tambahBaris();
+                        currentRow = document.getElementById('bodyTabel').lastElementChild;
+                    }
+                    const rowInputs = currentRow.querySelectorAll('input');
+                    for (let j = 0; j < columns.length; j++) {
+                        const targetIndex = colIndex + j;
+                        if (rowInputs[targetIndex]) rowInputs[targetIndex].value = columns[j].trim();
+                    }
+                    currentRow = currentRow.nextElementSibling;
+                }
+                prosesUlangSemua(true);
             });
-            lucide.createIcons();
+        });
+    }
+
+    function copyHasilKonversi() {
+        const rows = document.querySelectorAll('#bodyTabel tr');
+        let excelData = "";
+        rows.forEach(row => {
+            const nama = row.querySelector('.cell-nama').value;
+            const kh1 = row.querySelector('.k-nh1').innerText;
+
+            if (nama.trim() !== "" || kh1 !== "-") {
+                excelData += `${kh1}\n`;
+            }
+        });
+
+        if (excelData === "") {
+            showToast("⚠️ Tidak ada data untuk disalin.");
+            return;
         }
 
-        function exportToExcel() {
-            if (convertedData.length===0) { showToast("Tidak ada data untuk diekspor.","alert-triangle","#fef3c7","#92400e"); return; }
-            const data = convertedData.map((s,i)=>({
-                "No": i+1, "Nama Siswa": s.name,
-                "Nilai Asli": s.originalScore,
-                "Nilai Hasil Katrol": s.convertedScore,
-                "Kenaikan (Delta)": s.delta,
-                "Status": s.isPassed?"TUNTAS":"BELUM TUNTAS"
-            }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            ws['!cols'] = [{wch:6},{wch:25},{wch:12},{wch:18},{wch:16},{wch:18}];
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Hasil Katrol Nilai");
-            XLSX.writeFile(wb, `Konversi_Nilai_NoorIrfan_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showToast("File Excel berhasil diunduh!","file-spreadsheet","#dcfce7","#166534");
-        }
+        navigator.clipboard.writeText(excelData).then(() => {
+            showToast("🚀 Sukses! Kolom nilai hasil konversi berhasil disalin.");
+        });
+    }
 
-        function exportToCSV() {
-            if (convertedData.length===0) { showToast("Tidak ada data untuk diekspor.","alert-triangle","#fef3c7","#92400e"); return; }
-            let csv = "data:text/csv;charset=utf-8,No,Nama Siswa,Nilai Asli,Nilai Katrol,Kenaikan,Status\n";
-            convertedData.forEach((s,i)=>{
-                csv += `${i+1},"${s.name.replace(/"/g,'""')}",${s.originalScore},${s.convertedScore},${s.delta},${s.isPassed?"Tuntas":"Belum Tuntas"}\n`;
-            });
-            const link = document.createElement("a");
-            link.setAttribute("href", encodeURI(csv));
-            link.setAttribute("download", `Konversi_Nilai_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            showToast("File CSV berhasil diunduh!","download","#dcfce7","#166534");
-        }
-
-        function copyTableToClipboard() {
-            if (convertedData.length===0) { showToast("Tidak ada data untuk disalin.","alert-triangle","#fef3c7","#92400e"); return; }
-            let txt = "No\tNama Siswa\tNilai Asli\tNilai Katrol\tSelisih\tStatus\n";
-            convertedData.forEach((s,i)=>{ txt += `${i+1}\t${s.name}\t${s.originalScore}\t${s.convertedScore}\t${s.delta}\t${s.isPassed?"TUNTAS":"BELUM TUNTAS"}\n`; });
-            const ta = document.createElement("textarea"); ta.value = txt;
-            document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast("Data berhasil disalin ke clipboard!","check","#dcfce7","#166534"); }
-            catch { showToast("Gagal menyalin data.","alert-triangle","#fee2e2","#991b1b"); }
-            document.body.removeChild(ta);
-        }
-
-        let toastTimeout;
-        function showToast(msg, icon='info', bgColor='#eff6ff', txtColor='#1e40af') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = msg;
-            document.getElementById('toast-message').style.color = txtColor;
-            const wrap = document.getElementById('toast-icon-wrap');
-            wrap.style.background = bgColor;
-            const ic = document.getElementById('toast-icon');
-            ic.setAttribute('data-lucide', icon);
-            ic.style.color = txtColor;
-            lucide.createIcons();
-            clearTimeout(toastTimeout);
-            toast.classList.add('show');
-            toastTimeout = setTimeout(closeToast, 4000);
-        }
-
-        function closeToast() {
-            document.getElementById('toast').classList.remove('show');
-        }
-
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, t=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":"&#39;",'"':'&quot;'}[t]||t));
-        }
-    </script>
+    function showToast(pesan) {
+        const toast = document.getElementById('toastBox');
+        toast.innerText = pesan; toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+</script>
 </body>
 </html>
